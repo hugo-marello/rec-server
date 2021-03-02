@@ -1,4 +1,4 @@
 FROM node:alpine
 WORKDIR '/home/rec-server'
 COPY server.js .
-RUN ls
+ENTRYPOINT [ "node", "server.js" ]

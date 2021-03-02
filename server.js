@@ -11,7 +11,10 @@ let message = `HTTP/${httpVersion || '1.1'} ${httpCode} ${httpStatus}\r\n`;
 if(httpHeaders) {
     let headers = httpHeaders.split(';')
     for( const header of headers) {
-        let [name, value] = header.split(':');
+        const separatorIndex = header.indexOf('=');
+        if (separatorIndex == -1) continue;
+        const name =  header.slice(0, separatorIndex);
+        const value = header.slice(separatorIndex+1); 
         if(name && value) message+=`${name.trim()}: ${value.trim()}\r\n`
     }
 }

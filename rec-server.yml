@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: recserver
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: recserver
+  namespace: recserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: recserver
+  template:
+    metadata:
+      labels:
+        app: recserver
+    spec:
+      containers:
+      - image: hugomarell0/rec-server
+        env:
+        - name: REC_HTTP_STATUS
+          value: "My Message"
+        - name: REC_HTTP_CODE
+          value: "200"
+        imagePullPolicy: Always
+        name: recserver
+        ports:
+        - containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: recserver
+  namespace: recserver
+spec:
+  ports:
+  - port: 80
+    targetPort: 8000
+    protocol: TCP
+  selector:
+    app: recserver
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: recserver
+  namespace: recserver
+spec:
+  rules:
+  - host: myhost.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: recserver
+          servicePort: 80
